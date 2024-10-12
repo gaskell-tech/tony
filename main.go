@@ -3,16 +3,18 @@ package main
 import (
 	"log"
 	"os"
-	"tony/hvault"
+	internal "tony/internal/commands"
 
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := &cli.App{
+		EnableBashCompletion: true,
+
 		Commands: []*cli.Command{
-			hvault.EncryptAESCommand(),
-			hvault.DecryptAESCommand(),
+			internal.EncryptAES(),
+			internal.DecryptAES(),
 		},
 	}
 
