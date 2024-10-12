@@ -2,7 +2,7 @@ package internal
 
 import (
 	"fmt"
-	"log"
+	"os"
 	"strings"
 	"tony/helm"
 
@@ -21,14 +21,29 @@ func EncryptAES() *cli.Command {
 			&cli.StringFlag{
 				Name:     "password",
 				Aliases:  []string{"p"},
-				Usage:    "encryption password",
+				Usage:    "encrypt using password `PASSWORD`",
+				Required: true,
+			},
+			&cli.StringFlag{
+				Name:     "filename",
+				Aliases:  []string{"f"},
+				Usage:    "encrypt content of the file `FILENAME`",
 				Required: true,
 			},
 		},
 		Action: func(cCtx *cli.Context) error {
-			p := cCtx.String("password")
-			s := cCtx.Args().First()
-			out, err := helm.EncryptAES(p, s)
+			dir, err := os.Getwd()
+			if err != nil {
+				panic(err)
+			}
+			filepath := fmt.Sprint(dir, "\\", cCtx.String("filename"))
+			fmt.Println(filepath)
+			pwd := cCtx.String("password")
+			ct, err := os.ReadFile(filepath)
+			if err != nil {
+				panic(err)
+			}
+			out, err := helm.EncryptAES(pwd, string(ct))
 			if err != nil {
 				panic(err)
 			}
@@ -56,10 +71,7 @@ func DecryptAES() *cli.Command {
 			s := cCtx.Args().First()
 			if strings.HasPrefix(cCtx.Args().First(), AES) {
 				s = strings.TrimPrefix(s, AES)
-				o, err := helm.DecryptAES(p, s)
-				if err != nil {
-					log.Fatalln(err)
-				}
+				o, _ := helm.DecryptAES(p, s)
 				fmt.Println(o)
 			} else {
 				fmt.Println("The string does not start with the prefix: ", AES)

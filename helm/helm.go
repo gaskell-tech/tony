@@ -6,7 +6,6 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"io"
 )
 
@@ -58,7 +57,6 @@ func DecryptAES(password string, crypt64 string) (string, error) {
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		fmt.Println("foo")
 		return "", err
 	}
 
