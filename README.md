@@ -1,5 +1,9 @@
 # tony
-tony is a utils application.
+tony.exe is a utils application.
+
+```bash
+go build
+```
 
 ## encryptAES
 
@@ -21,4 +25,10 @@ The ciphertext format: `AES256:<base64-encoded-data>`
 
 ```bash
 tony.exe d -p \<password\> \<ciphertext\>
+```
+
+## Testing
+
+```bash
+go test ./... -v
 ```
