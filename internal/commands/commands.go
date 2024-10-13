@@ -3,6 +3,8 @@ package internal
 import (
 	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 	"tony/helm"
 
@@ -12,7 +14,6 @@ import (
 const AES = "AES256:"
 
 func EncryptAES() *cli.Command {
-
 	return &cli.Command{
 		Name:    "encryptAES",
 		Aliases: []string{"e"},
@@ -32,18 +33,10 @@ func EncryptAES() *cli.Command {
 			},
 		},
 		Action: func(cCtx *cli.Context) error {
-			dir, err := os.Getwd()
-			if err != nil {
-				panic(err)
-			}
-			filepath := fmt.Sprint(dir, "\\", cCtx.String("filename"))
-			fmt.Println(filepath)
-			pwd := cCtx.String("password")
-			ct, err := os.ReadFile(filepath)
-			if err != nil {
-				panic(err)
-			}
-			out, err := helm.EncryptAES(pwd, string(ct))
+			passwd := cCtx.String("password")
+			ct := getCleartext(cCtx.String("filename"))
+			fmt.Println(string(ct))
+			out, err := helm.EncryptAES(passwd, string(ct))
 			if err != nil {
 				panic(err)
 			}
@@ -79,4 +72,29 @@ func DecryptAES() *cli.Command {
 			return nil
 		},
 	}
+}
+
+// getCleartext returns content of file f
+func getCleartext(f string) []byte {
+	// determine if path absolute
+	if filepath.IsAbs(f) {
+		ct, err := os.ReadFile(f)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		return ct
+	}
+
+	// if path is not absolute, determine filepath relative to working directory.
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	ct, err := os.ReadFile(path.Join(dir, f))
+	if err != nil {
+		fmt.Println("error: ", err)
+		os.Exit(1)
+	}
+	return ct
 }
