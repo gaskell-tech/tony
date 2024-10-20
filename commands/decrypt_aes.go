@@ -1,4 +1,4 @@
-package internal
+package commands
 
 import (
 	"fmt"
@@ -10,41 +10,6 @@ import (
 
 	"github.com/urfave/cli/v2"
 )
-
-const AES = "AES256:"
-
-func EncryptAES() *cli.Command {
-	return &cli.Command{
-		Name:    "encryptAES",
-		Aliases: []string{"e"},
-		Usage:   "encrypt file content",
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:     "password",
-				Aliases:  []string{"p"},
-				Usage:    "encrypt using password `PASSWORD`",
-				Required: true,
-			},
-			&cli.StringFlag{
-				Name:     "filename",
-				Aliases:  []string{"f"},
-				Usage:    "encrypt content of the file `FILENAME`",
-				Required: true,
-			},
-		},
-		Action: func(cCtx *cli.Context) error {
-			passwd := cCtx.String("password")
-			ct := getCleartext(cCtx.String("filename"))
-			fmt.Println(string(ct))
-			out, err := helm.EncryptAES(passwd, string(ct))
-			if err != nil {
-				panic(err)
-			}
-			fmt.Printf("%s%s", AES, out)
-			return nil
-		},
-	}
-}
 
 func DecryptAES() *cli.Command {
 	return &cli.Command{
@@ -60,6 +25,7 @@ func DecryptAES() *cli.Command {
 			},
 		},
 		Action: func(cCtx *cli.Context) error {
+			AES := "AES256:"
 			p := cCtx.String("password")
 			s := cCtx.Args().First()
 			if strings.HasPrefix(cCtx.Args().First(), AES) {

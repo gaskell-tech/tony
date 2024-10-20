@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"os"
-	internal "tony/internal/commands"
+	internal "tony/commands"
 
 	"github.com/urfave/cli/v2"
 )
@@ -15,6 +15,7 @@ func main() {
 		Commands: []*cli.Command{
 			internal.EncryptAES(),
 			internal.DecryptAES(),
+			internal.UpdateValues(),
 		},
 	}
 
